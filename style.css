@@ -1,0 +1,501 @@
+/* --- CSS Variables --- */
+:root {
+    --bg-color: #0f0f0f;
+    --primary-text: #e0e0e0;
+    --secondary-text: #a0a0a0;
+    --accent-color: #00aaff;
+    --accent-hover: #0088cc;
+    --card-bg: #1a1a1a;
+    --border-color: #333333;
+    --heading-font: 'Poppins', sans-serif;
+    --body-font: 'Roboto', sans-serif;
+    --shadow-color: rgba(0, 0, 0, 0.4); /* Slightly stronger shadow */
+    --card-shadow: 0 4px 15px var(--shadow-color);
+    --card-hover-shadow: 0 8px 25px var(--shadow-color);
+}
+
+/* Basic Reset & Body Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--body-font);
+    line-height: 1.7;
+    color: var(--primary-text);
+    background-color: var(--bg-color);
+    overflow-x: hidden;
+}
+
+/* --- Loader Styles --- */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color); /* Match background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* Ensure it's on top */
+    transition: opacity 0.5s ease-out; /* Transition for fade out */
+    opacity: 1; /* Start visible */
+}
+
+#loader.hidden { /* Class added by JS to hide */
+    opacity: 0;
+    pointer-events: none; /* Allow interaction with content below */
+}
+
+#loader p {
+    margin-top: 20px;
+    font-family: var(--heading-font);
+    color: var(--primary-text);
+    font-size: 1.1rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color); /* Lighter border */
+    border-top-color: var(--accent-color); /* Accent color for spinning part */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Canvas Styling */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2; /* Behind content and pseudo-elements */
+    display: block;
+}
+
+/* Content Styling */
+#content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+/* Section Styling */
+section {
+    position: relative; /* Needed for pseudo-element */
+    min-height: 80vh;
+    padding: 100px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Subtle Dark Overlay for Readability */
+section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 15, 15, 0.4); /* Adjust alpha for darkness */
+    z-index: -1;
+    backdrop-filter: blur(3px);
+}
+
+/* Hero section doesn't need the overlay */
+#hero::before {
+    background-color: transparent;
+    /* backdrop-filter: none; */
+}
+
+section:last-child {
+    border-bottom: none;
+}
+
+/* Ensure section content is above the overlay */
+section > * {
+   position: relative;
+   z-index: 2;
+}
+/* Target specific children if necessary */
+ section .section-content, section h2, section .skills-container, section .project-grid, section .contact-links, section p {
+     position: relative;
+     z-index: 2;
+ }
+
+/* Headings and Text */
+h1, h2, h3 {
+    font-family: var(--heading-font);
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    color: var(--primary-text);
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    color: var(--secondary-text);
+}
+
+.section-content p {
+     max-width: 700px;
+     margin-left: auto;
+     margin-right: auto;
+     text-align: center;
+     font-size: 1.1rem;
+     color: var(--primary-text);
+}
+
+strong {
+    font-weight: 500;
+    color: var(--primary-text);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative; /* For animated underline */
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* Animated Underline Effect */
+a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--accent-hover);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+}
+
+a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* Disable underline effect for elements styled as buttons/cards */
+.cta-button::after, .contact-button::after, .project-link::after {
+   display: none;
+}
+.card a::after { /* Disable inside cards if needed */
+     display: none;
+}
+
+
+/* Hero Section Specifics */
+#hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: none;
+    padding-bottom: 10vh;
+    overflow: hidden; /* Prevent animations causing scroll */
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+    color: var(--primary-text);
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: #fff !important; /* Ensure text is white */
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: var(--heading-font);
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3);
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background-color: var(--accent-hover);
+    color: #fff !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 170, 255, 0.4);
+}
+
+/* Hero Text Entrance Animation */
+#hero h1 { animation: fadeInUp 0.8s ease-out 0.3s backwards; }
+#hero .subtitle { animation: fadeInUp 0.8s ease-out 0.5s backwards; }
+#hero .hero-description { animation: fadeInUp 0.8s ease-out 0.7s backwards; }
+#hero .cta-button { animation: fadeInUp 0.8s ease-out 0.9s backwards; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Card Styling */
+.card {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.02); /* Lift and slight scale effect */
+    box-shadow: var(--card-hover-shadow);
+}
+
+/* Skills Layout */
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.skill-category h3 {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.skill-category ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.skill-category li {
+    margin-bottom: 0.7rem;
+    color: var(--secondary-text);
+    position: relative;
+    padding-left: 18px;
+}
+
+.skill-category li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    top: 0px;
+    color: var(--accent-color);
+    font-size: 1.2em;
+    line-height: inherit;
+}
+
+.skill-category .icon {
+    font-size: 1.5em;
+    color: var(--accent-color);
+}
+
+
+/* Project Layout */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.project {
+    display: flex;
+    flex-direction: column;
+}
+
+.project h3 {
+    margin-top: 0;
+}
+
+.project p {
+    color: var(--secondary-text);
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.tech-stack {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
+}
+
+.tech-stack strong {
+    color: var(--primary-text);
+}
+
+.project-link {
+    display: inline-block;
+    margin-top: auto;
+    font-weight: 500;
+    font-family: var(--heading-font);
+    align-self: flex-start;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.project-link:hover {
+    transform: translateX(5px);
+    color: var(--accent-hover);
+}
+
+
+/* Contact Section */
+#contact {
+    text-align: center;
+}
+
+#contact p {
+     max-width: 600px;
+     margin-left: auto;
+     margin-right: auto;
+     color: var(--primary-text);
+     margin-bottom: 2.5rem;
+}
+
+.contact-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.contact-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--card-bg);
+    color: var(--primary-text) !important; /* Ensure text color */
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-family: var(--heading-font);
+    font-weight: 500;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.contact-button:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff !important;
+    transform: translateY(-3px);
+}
+
+.contact-button i {
+    font-size: 1.2em;
+}
+
+/* Scroll Fade-in Animation */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    h1 { font-size: 3.5rem; }
+    h2 { font-size: 2.2rem; }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 2.8rem; }
+    h2 { font-size: 2rem; }
+    #content { max-width: 90%; padding: 0 20px; }
+    .skills-container, .project-grid { grid-template-columns: 1fr; }
+    section { padding: 80px 0; }
+    .contact-links { flex-direction: column; gap: 15px; align-items: center; }
+    .contact-button { width: fit-content; }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 2.4rem; }
+    h2 { font-size: 1.8rem; }
+    .cta-button { padding: 10px 25px; font-size: 0.9rem; }
+    .card { padding: 25px; }
+}
+
+/* Accessibility: Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Optionally stop JS animations too */
+  /* Consider adding a class to body via JS detection */
+}
