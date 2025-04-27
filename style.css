@@ -116,14 +116,15 @@ section::before {
     right: 0;
     bottom: 0;
     background-color: rgba(15, 15, 15, 0.4); /* Adjust alpha for darkness */
-    z-index: -1;
+    z-index: -1; /* Between content and canvas */
+    /* Optional: Add a very subtle blur only to this layer */
     backdrop-filter: blur(3px);
 }
 
 /* Hero section doesn't need the overlay */
 #hero::before {
     background-color: transparent;
-    /* backdrop-filter: none; */
+     backdrop-filter: none; /* Ensure no blur on hero */
 }
 
 section:last-child {
@@ -221,7 +222,14 @@ a:hover::after {
 
 /* Disable underline effect for elements styled as buttons/cards */
 .cta-button::after, .contact-button::after, .project-link::after {
-   display: none;
+   /* --- MODIFIED --- */
+   /* Keep existing ::after rule disabled for underline, */
+   /* but the button click effect will use its own ::after */
+   /* If you previously used display: none; here, keep it */
+   /* If you didn't have this rule specifically targeting buttons, */
+   /* ensure the underline doesn't appear on buttons via other means */
+    background-color: transparent !important; /* Prevent underline from showing */
+    height: 0 !important;
 }
 .card a::after { /* Disable inside cards if needed */
      display: none;
@@ -257,8 +265,12 @@ a:hover::after {
 
 .cta-button {
     display: inline-block;
+    /* --- ADDED/MODIFIED --- */
+    position: relative;   /* Ensure position relative for pseudo-element */
+    overflow: hidden;     /* Ensure overflow hidden for ripple containment */
+    /* --- END ADDED/MODIFIED --- */
     background-color: var(--accent-color);
-    color: #fff !important; /* Ensure text is white */
+    color: #fff !important;
     padding: 12px 30px;
     border-radius: 25px;
     font-family: var(--heading-font);
@@ -266,17 +278,69 @@ a:hover::after {
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    /* --- MODIFIED: Separated transitions for clarity --- */
+    transition: background-color 0.3s ease, transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    /* --- END MODIFIED --- */
     box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3);
     cursor: pointer;
+    /* Ensure z-index if needed, though usually not required here */
+    /* z-index: 1; */
 }
 
 .cta-button:hover {
     background-color: var(--accent-hover);
     color: #fff !important;
+    /* Keep existing hover transform */
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0, 170, 255, 0.4);
 }
+
+/* --- ADDED: Futuristic Button Click Effect --- */
+
+/* The ripple pseudo-element */
+.cta-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px; /* Start small */
+    height: 5px;
+    /* Futuristic color */
+    background: rgba(0, 200, 255, 0.6);
+    border-radius: 50%;
+    /* Start invisible and scaled down */
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    /* Prevent pseudo-element from blocking clicks on the button */
+    pointer-events: none;
+    /* Ensure z-index doesn't interfere if you used one on the button */
+    /* z-index: -1;  <-- Usually not needed if pointer-events: none is set */
+}
+
+/* Define the ripple animation */
+@keyframes futuristicRipple {
+  to {
+    transform: translate(-50%, -50%) scale(40); /* Scale up */
+    opacity: 0; /* Fade out */
+  }
+}
+
+/* Apply the animation ONLY when the 'clicked' class is added via JS */
+.cta-button.clicked::after {
+    /* Run the animation: Duration 0.6s, ease-out timing */
+    animation: futuristicRipple 0.6s ease-out;
+}
+
+/* Optional: Visual change DURING the actual mouse press */
+.cta-button:active {
+    /* Slight press down effect */
+    transform: scale(0.97) translateY(1px);
+    /* Slightly change shadow for press feedback */
+    box-shadow: 0 2px 8px rgba(0, 170, 255, 0.4);
+}
+
+/* --- END ADDED --- */
+
 
 /* Hero Text Entrance Animation */
 #hero h1 { animation: fadeInUp 0.8s ease-out 0.3s backwards; }
@@ -496,6 +560,4 @@ a:hover::after {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  /* Optionally stop JS animations too */
-  /* Consider adding a class to body via JS detection */
 }

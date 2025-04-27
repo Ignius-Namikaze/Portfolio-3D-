@@ -45,7 +45,7 @@ if (!canvas) {
 function init() {
     // Scene
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(BACKGROUND_COLOR, 10, 25); // Optional fog
+     scene.fog = new THREE.Fog(BACKGROUND_COLOR, 10, 25); // Optional fog
 
     // Camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -101,7 +101,7 @@ function setupLighting() {
 
     const directionalLight = new THREE.DirectionalLight(DIRECTIONAL_LIGHT_COLOR, DIRECTIONAL_LIGHT_INTENSITY);
     directionalLight.position.set(DIRECTIONAL_LIGHT_POSITION.x, DIRECTIONAL_LIGHT_POSITION.y, DIRECTIONAL_LIGHT_POSITION.z);
-    directionalLight.castShadow = true; // Performance intensive
+    // directionalLight.castShadow = true; // Performance intensive
     scene.add(directionalLight);
 }
 
@@ -153,12 +153,12 @@ function loadModel() {
             console.log("Model processed");
 
             // Optional: Adjust material properties
-            carModel.traverse((child) => {
-                 if (child.isMesh && child.material) {
-                     if(child.material.metalness !== undefined) child.material.metalness = 0.4;
-                     if(child.material.roughness !== undefined) child.material.roughness = 0.5;
-                 }
-             });
+             carModel.traverse((child) => {
+                  if (child.isMesh && child.material) {
+                      if(child.material.metalness !== undefined) child.material.metalness = 0.4;
+                      if(child.material.roughness !== undefined) child.material.roughness = 0.5;
+                  }
+              });
 
             // Center and Scale
             const box = new THREE.Box3().setFromObject(carModel);
@@ -203,7 +203,7 @@ function handleScroll() {
 function handleMouseMove(event) {
     if (!carModel || isReducedMotion) return; // Ignore if reduced motion
 
-    // Normalize mouse position (-0.5 to 0.5 is often easier, but -1 to 1 works)
+    // Normalize mouse position (-1 to 1)
      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -264,10 +264,10 @@ function setupFadeInObserver() {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
                  // Optional: Unobserve after first time for performance
-                  observer.unobserve(entry.target);
+                 observer.unobserve(entry.target); // <-- Uncommented your unobserve here
             } else {
                  // Optional: Remove class to fade out when scrolling up
-                  entry.target.classList.remove('visible');
+                 entry.target.classList.remove('visible'); // <-- Uncommented your remove class here
             }
         });
     }, options);
@@ -311,3 +311,30 @@ function setupOrbitControls() {
     controls.target.set(0, 0.5, 0); // Adjust target based on model center
     // No need for controls.addEventListener('change', render) if animate loop is running
 }
+
+// --- ADDED: Futuristic Button Click Listener ---
+document.addEventListener('DOMContentLoaded', () => {
+    const ctaButton = document.querySelector('.cta-button');
+
+    if (ctaButton) {
+        ctaButton.addEventListener('click', (e) => {
+            // 1. Add the 'clicked' class to trigger the CSS animation
+            ctaButton.classList.add('clicked');
+
+            // 2. Important: Remove the class after the animation finishes
+            //    The timeout duration should match the animation duration in CSS (0.6s = 600ms)
+            setTimeout(() => {
+                // Check if the class is still there before removing (safety)
+                if (ctaButton.classList.contains('clicked')) {
+                    ctaButton.classList.remove('clicked');
+                }
+            }, 600); // Match the animation duration (0.6s)
+
+            // 3. Note: We don't prevent the default scroll behavior here,
+            //    because we *want* the click to scroll down to the #about section.
+        });
+    } else {
+        console.warn("CTA button '.cta-button' not found for click effect.");
+    }
+});
+// --- END ADDED ---
